@@ -477,6 +477,9 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 				if len(elem.packet) < ipv4.HeaderLen {
 					continue
 				}
+				if n, ok := elem.endpoint.(NAT); ok {
+					n.NAT(elem.packet)
+				}
 				field := elem.packet[IPv4offsetTotalLength : IPv4offsetTotalLength+2]
 				length := binary.BigEndian.Uint16(field)
 				if int(length) > len(elem.packet) || int(length) < ipv4.HeaderLen {
@@ -492,6 +495,9 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 			case 6:
 				if len(elem.packet) < ipv6.HeaderLen {
 					continue
+				}
+				if n, ok := elem.endpoint.(NAT); ok {
+					n.NAT(elem.packet)
 				}
 				field := elem.packet[IPv6offsetPayloadLength : IPv6offsetPayloadLength+2]
 				length := binary.BigEndian.Uint16(field)
@@ -537,4 +543,8 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 		bufs = bufs[:0]
 		device.PutInboundElementsContainer(elemsContainer)
 	}
+}
+
+type NAT interface {
+	NAT(buf []byte)
 }

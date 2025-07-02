@@ -407,6 +407,11 @@ top:
 }
 
 func (peer *Peer) FlushStagedPackets() {
+	peer.endpoint.Lock()
+	if endpoint := peer.endpoint.val; endpoint != nil {
+		endpoint.ClearSrc()
+	}
+	peer.endpoint.Unlock()
 	for {
 		select {
 		case elemsContainer := <-peer.queue.staged:

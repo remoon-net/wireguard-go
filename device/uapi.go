@@ -345,6 +345,9 @@ func (device *Device) handlePeerLine(peer *ipcSetPeer, key, value string) error 
 		}
 		peer.endpoint.Lock()
 		defer peer.endpoint.Unlock()
+		if ep := peer.endpoint.val; ep != nil {
+			ep.ClearSrc()
+		}
 		peer.endpoint.val = endpoint
 
 	case "persistent_keepalive_interval":

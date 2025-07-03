@@ -283,9 +283,6 @@ func (peer *Peer) SetEndpointFromPacket(endpoint conn.Endpoint) {
 		return
 	}
 	peer.endpoint.clearSrcOnTx = false
-	if ep := peer.endpoint.val; ep != nil {
-		ep.ClearSrc()
-	}
 	peer.endpoint.val = endpoint
 }
 
